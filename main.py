@@ -1,4 +1,3 @@
-import gradio as gr
 from ui import create_gradio_interface
 
 if __name__ == "__main__":

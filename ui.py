@@ -33,7 +33,9 @@ def create_gradio_interface():
         with gr.Tab("Dataset"):
             with gr.Group():
                 gr.Markdown("## Use Existing Dataset")
-                dataset_path = gr.Textbox(label="Dataset Path", value="mlabonne/FineTome-100k")
+                dataset_source = gr.Radio(["Hugging Face", "Local File"], label="Dataset Source", value="Hugging Face")
+                hf_dataset_path = gr.Textbox(label="Hugging Face Dataset Path", value="mlabonne/FineTome-100k")
+                local_dataset_path = gr.File(label="Upload Local Dataset (JSON or CSV)", visible=False)
                 convert_btn = gr.Button("Prepare Dataset")
             
             with gr.Group():
@@ -74,14 +76,28 @@ def create_gradio_interface():
         def load_model_and_tokenizer(model_path, hf_token):
             model, tokenizer = load_model(model_path, hf_token)
             return model, tokenizer, "Model loaded successfully!"
-        
+
         def update_ollama_visibility(choice):
             return gr.update(visible=(choice == "Ollama"))
+
+        def update_dataset_input_visibility(choice):
+            return gr.update(visible=(choice == "Hugging Face")), gr.update(visible=(choice == "Local File"))
 
         load_model_btn = gr.Button("Load Model")
         load_model_btn.click(load_model_and_tokenizer, inputs=[model_path, hf_token], outputs=[model, tokenizer, train_output])
 
-        convert_btn.click(prepare_dataset, inputs=[dataset_path], outputs=[dataset])
+        dataset_source.change(update_dataset_input_visibility, inputs=[dataset_source], outputs=[hf_dataset_path, local_dataset_path])
+
+        def prepare_dataset_wrapper(source, hf_path, local_file):
+            if source == "Hugging Face":
+                path = hf_path
+            else:
+                path = local_file.name if local_file else None
+            return prepare_dataset(source.lower().replace(" ", "_"), path, tokenizer.value)
+
+        convert_btn.click(prepare_dataset_wrapper, 
+                          inputs=[dataset_source, hf_dataset_path, local_dataset_path], 
+                          outputs=[dataset])
         
         create_dataset_btn.click(create_synthetic_dataset, 
                                  inputs=[examples, num_samples, ai_provider, api_key, ollama_model], 
