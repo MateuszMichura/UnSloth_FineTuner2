@@ -27,7 +27,7 @@ def create_gradio_interface():
         gr.Markdown("# LLM Finetuner")
         
         with gr.Tab("Settings"):
-            hf_token = gr.Textbox(label="Hugging Face Token")
+            hf_token = gr.Textbox(label="Hugging Face Token", type="password")
             model_path = gr.Dropdown(label="Model", choices=models, value="unsloth/Llama-3.2-3B-Instruct")
         
         with gr.Tab("Dataset"):
@@ -41,6 +41,7 @@ def create_gradio_interface():
             with gr.Group():
                 gr.Markdown("## Create Synthetic Dataset")
                 examples = gr.Textbox(label="Example Conversations", lines=10, placeholder="Enter example conversations here...")
+                expected_structure = gr.Textbox(label="Expected Dataset Structure", lines=5, placeholder="Enter the expected structure for the dataset...")
                 num_samples = gr.Number(label="Number of Samples to Generate", value=100)
                 ai_provider = gr.Radio(["OpenAI", "Anthropic", "Ollama"], label="AI Provider")
                 api_key = gr.Textbox(label="API Key", type="password")
@@ -88,20 +89,28 @@ def create_gradio_interface():
 
         dataset_source.change(update_dataset_input_visibility, inputs=[dataset_source], outputs=[hf_dataset_path, local_dataset_path])
 
-        def prepare_dataset_wrapper(source, hf_path, local_file):
+        def prepare_dataset_wrapper(source, hf_path, local_file, hf_token):
             if source == "Hugging Face":
-                path = hf_path
+                return prepare_dataset("huggingface", hf_path, tokenizer.value, hf_token)
+            elif source == "Local File":
+                if local_file is not None:
+                    return prepare_dataset("local", local_file.name, tokenizer.value)
+                else:
+                    return "No file uploaded. Please upload a local dataset file."
             else:
-                path = local_file.name if local_file else None
-            return prepare_dataset(source.lower().replace(" ", "_"), path, tokenizer.value)
+                return "Invalid dataset source selected."
 
         convert_btn.click(prepare_dataset_wrapper, 
-                          inputs=[dataset_source, hf_dataset_path, local_dataset_path], 
+                          inputs=[dataset_source, hf_dataset_path, local_dataset_path, hf_token], 
                           outputs=[dataset])
         
-        create_dataset_btn.click(create_synthetic_dataset, 
-                                 inputs=[examples, num_samples, ai_provider, api_key, ollama_model], 
-                                 outputs=[dataset])
+        def create_synthetic_dataset_wrapper(examples, expected_structure, num_samples, ai_provider, api_key, ollama_model):
+            dataset = create_synthetic_dataset(examples, expected_structure, num_samples, ai_provider, api_key, ollama_model)
+            return dataset, "Synthetic dataset created successfully!"
+
+        create_dataset_btn.click(create_synthetic_dataset_wrapper, 
+                                 inputs=[examples, expected_structure, num_samples, ai_provider, api_key, ollama_model], 
+                                 outputs=[dataset, train_output])
         
         ai_provider.change(update_ollama_visibility, inputs=[ai_provider], outputs=[ollama_model])
         
