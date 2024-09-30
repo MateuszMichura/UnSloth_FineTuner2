@@ -21,6 +21,7 @@ def create_gradio_interface():
         "unsloth/Llama-3.2-1B-Instruct-bnb-4bit",
         "unsloth/Llama-3.2-3B-bnb-4bit",
         "unsloth/Llama-3.2-3B-Instruct-bnb-4bit",
+        "unsloth/Llama-3.2-3B-Instruct"
     ]
 
     with gr.Blocks() as demo:
