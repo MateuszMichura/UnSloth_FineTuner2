@@ -2,6 +2,9 @@ from datasets import load_dataset, Dataset
 from unsloth.chat_templates import standardize_sharegpt
 import json
 import csv
+import openai
+import anthropic
+import requests
 
 def prepare_dataset(dataset_source, dataset_path, tokenizer):
     """
@@ -41,4 +44,56 @@ def prepare_dataset(dataset_source, dataset_path, tokenizer):
         return {"text": texts}
     
     dataset = dataset.map(formatting_prompts_func, batched=True)
+    return dataset
+
+def create_synthetic_dataset(examples, num_samples, ai_provider, api_key, model_name):
+    """
+    Create a synthetic dataset based on example conversations.
+    
+    Args:
+    examples (str): Example conversations to base the synthetic data on.
+    num_samples (int): Number of synthetic samples to generate.
+    ai_provider (str): AI provider to use for generation ('OpenAI', 'Anthropic', or 'Ollama').
+    api_key (str): API key for the chosen AI provider.
+    model_name (str): Model name for Ollama (if applicable).
+    
+    Returns:
+    Dataset: Synthetic dataset ready for fine-tuning.
+    """
+    synthetic_data = []
+    
+    if ai_provider == "OpenAI":
+        openai.api_key = api_key
+        for _ in range(num_samples):
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are an AI assistant creating training data. Generate a conversation based on the given examples."},
+                    {"role": "user", "content": f"Examples:\n{examples}\n\nGenerate a new conversation in the same style:"}
+                ]
+            )
+            synthetic_data.append({"conversations": json.loads(response.choices[0].message.content)})
+    
+    elif ai_provider == "Anthropic":
+        client = anthropic.Anthropic(api_key=api_key)
+        for _ in range(num_samples):
+            response = client.completions.create(
+                model="claude-2.1",
+                prompt=f"Human: You are an AI assistant creating training data. Generate a conversation based on the given examples.\n\nExamples:\n{examples}\n\nGenerate a new conversation in the same style:\n\nAssistant: Here's a new conversation in the same style:\n\n",
+                max_tokens_to_sample=300
+            )
+            synthetic_data.append({"conversations": json.loads(response.completion)})
+    
+    elif ai_provider == "Ollama":
+        for _ in range(num_samples):
+            response = requests.post('http://localhost:11434/api/generate',
+                                     json={
+                                         "model": model_name,
+                                         "prompt": f"You are an AI assistant creating training data. Generate a conversation based on the given examples.\n\nExamples:\n{examples}\n\nGenerate a new conversation in the same style:",
+                                         "stream": False
+                                     })
+            synthetic_data.append({"conversations": json.loads(response.json()["response"])})
+    
+    dataset = Dataset.from_list(synthetic_data)
+    dataset = standardize_sharegpt(dataset)
     return dataset
