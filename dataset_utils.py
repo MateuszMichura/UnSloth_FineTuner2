@@ -73,6 +73,16 @@ def prepare_dataset(dataset_source, dataset_path, tokenizer, hf_token=None):
         return {"text": texts}
     
     dataset = dataset.map(formatting_prompts_func, batched=True)
+    
+    if 'text' not in dataset.column_names:
+        def format_conversation(example):
+            formatted_text = ""
+            for turn in example['conversations']:
+                formatted_text += f"{turn['role']}: {turn['content']}\n"
+            return {"text": formatted_text.strip()}
+        
+        dataset = dataset.map(format_conversation)
+    
     return dataset
 
 def standardize_sharegpt(dataset):
@@ -125,7 +135,7 @@ def create_synthetic_dataset(examples, expected_structure, num_samples, ai_provi
         for _ in tqdm(range(num_samples), desc="Generating samples"):
             try:
                 response = client.chat.completions.create(
-                    model="gpt-4o-mini",
+                    model="gpt-4-0125-preview",
                     messages=[{"role": "user", "content": prompt}],
                     timeout=30  # 30 seconds timeout
                 )
@@ -144,7 +154,7 @@ def create_synthetic_dataset(examples, expected_structure, num_samples, ai_provi
         for _ in tqdm(range(num_samples), desc="Generating samples"):
             try:
                 response = client.completions.create(
-                    model="claude-2.1",
+                    model="claude-3-opus-20240229",
                     prompt=f"Human: {prompt}\n\nAssistant:",
                     max_tokens_to_sample=1000,
                     timeout=30  # 30 seconds timeout
@@ -180,4 +190,14 @@ def create_synthetic_dataset(examples, expected_structure, num_samples, ai_provi
     
     dataset = Dataset.from_list(synthetic_data)
     dataset = standardize_sharegpt(dataset)
+    
+    if 'text' not in dataset.column_names:
+        def format_conversation(example):
+            formatted_text = ""
+            for turn in example['conversations']:
+                formatted_text += f"{turn['role']}: {turn['content']}\n"
+            return {"text": formatted_text.strip()}
+        
+        dataset = dataset.map(format_conversation)
+    
     return dataset

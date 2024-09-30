@@ -143,8 +143,11 @@ def create_gradio_interface():
             if dataset_val is None:
                 return "Error: Dataset not prepared. Please prepare or create a dataset first."
             
-            output = finetune_model(model_val, tokenizer_val, dataset_val, learning_rate, batch_size, num_epochs)
-            return output
+            try:
+                output = finetune_model(model_val, tokenizer_val, dataset_val, learning_rate, batch_size, num_epochs)
+                return output
+            except Exception as e:
+                return f"Error during training: {str(e)}"
 
         train_btn.click(
             train_model_wrapper,
