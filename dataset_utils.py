@@ -1,5 +1,4 @@
 from datasets import load_dataset, Dataset
-from unsloth.chat_templates import standardize_sharegpt
 import json
 import csv
 import openai
@@ -55,15 +54,39 @@ def prepare_dataset(dataset_source, dataset_path, tokenizer, hf_token=None):
     else:
         raise ValueError("Invalid dataset source. Use 'huggingface' or 'local'.")
 
-    dataset = standardize_sharegpt(dataset)
+    # Check if 'conversations' column exists, if not, try to create it
+    if 'conversations' not in dataset.column_names:
+        if 'text' in dataset.column_names:
+            dataset = dataset.map(lambda example: {'conversations': [{'human': example['text'], 'assistant': ''}]})
+        else:
+            raise ValueError("Dataset does not contain 'conversations' or 'text' column. Please check your dataset structure.")
+
+    # Only apply standardize_sharegpt if 'conversations' column exists
+    if 'conversations' in dataset.column_names:
+        dataset = standardize_sharegpt(dataset)
     
     def formatting_prompts_func(examples):
+        if tokenizer is None:
+            raise ValueError("Tokenizer is not properly initialized. Please load the model and tokenizer before preparing the dataset.")
         convos = examples["conversations"]
         texts = [tokenizer.apply_chat_template(convo, tokenize=False, add_generation_prompt=False) for convo in convos]
         return {"text": texts}
     
     dataset = dataset.map(formatting_prompts_func, batched=True)
     return dataset
+
+def standardize_sharegpt(dataset):
+    # This is a simplified version. You might need to adjust it based on your specific needs.
+    def process_conversation(conversation):
+        standardized = []
+        for turn in conversation:
+            if 'human' in turn:
+                standardized.append({'role': 'user', 'content': turn['human']})
+            if 'assistant' in turn:
+                standardized.append({'role': 'assistant', 'content': turn['assistant']})
+        return standardized
+
+    return dataset.map(lambda x: {'conversations': process_conversation(x['conversations'])})
 
 def create_synthetic_dataset(examples, expected_structure, num_samples, ai_provider, api_key, model_name=None):
     """
