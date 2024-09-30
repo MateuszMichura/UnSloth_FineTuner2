@@ -106,7 +106,10 @@ def create_synthetic_dataset(examples, expected_structure, num_samples, ai_provi
     synthetic_data = []
     
     prompt = f"""
-    You are an AI assistant creating training data. Generate a conversation based on the given examples and structure.
+    You are an AI assistant creating training dataset for finetuning a model. 
+    You are provided an one-shot or few-shot output example of output that application expects from the AI model. You are also provided the
+    expected structure that the to-be trained AI model expects during training process.
+    
 
     Examples:
     {examples}
@@ -114,7 +117,7 @@ def create_synthetic_dataset(examples, expected_structure, num_samples, ai_provi
     Expected structure:
     {expected_structure}
 
-    Generate a new conversation in the same style and structure:
+    Please help Generate a new dataset in the provided same style and expected structure. Do not produce any extra output except the dataset in the training needed structure:
     """
     
     if ai_provider == "OpenAI":
@@ -122,7 +125,7 @@ def create_synthetic_dataset(examples, expected_structure, num_samples, ai_provi
         for _ in tqdm(range(num_samples), desc="Generating samples"):
             try:
                 response = client.chat.completions.create(
-                    model="gpt-3.5-turbo",
+                    model="gpt-4o-mini",
                     messages=[{"role": "user", "content": prompt}],
                     timeout=30  # 30 seconds timeout
                 )
