@@ -11,3 +11,5 @@ tqdm
 accelerate
 bitsandbytes
 huggingface_hub
+triton
+peft

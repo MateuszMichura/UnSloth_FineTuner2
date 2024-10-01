@@ -20,10 +20,10 @@ def load_model(model_path, hf_token):
     cuda_available = torch.cuda.is_available()
     if cuda_available:
         print(f"CUDA is available. Using GPU: {torch.cuda.get_device_name(0)}")
-        device = torch.device("cuda")
+        device = "cuda"
     else:
         print("CUDA is not available. Using CPU.")
-        device = torch.device("cpu")
+        device = "cpu"
 
     # Try to use unsloth if it's available
     if importlib.util.find_spec("unsloth") is not None:
@@ -45,14 +45,16 @@ def load_model(model_path, hf_token):
         print("unsloth not found. Using standard transformers.")
         model = load_with_transformers(model_path, hf_token, device)
     
-    model.to(device)
+    # Do not use .to(device) for quantized models
+    # The device placement is handled automatically by unsloth or transformers
+    
     return model, tokenizer
 
 def load_with_transformers(model_path, hf_token, device):
     """Helper function to load model with standard transformers library."""
     return AutoModelForCausalLM.from_pretrained(
         model_path,
-        device_map="auto",
+        device_map="auto",  # This will handle device placement automatically
         token=hf_token,
-        torch_dtype=torch.float16 if device.type == "cuda" else torch.float32
+        torch_dtype=torch.float16 if device == "cuda" else torch.float32
     )
