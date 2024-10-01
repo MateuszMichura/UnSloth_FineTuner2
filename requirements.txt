@@ -8,3 +8,6 @@ openai
 anthropic
 requests
 tqdm
+accelerate
+bitsandbytes
+huggingface_hub

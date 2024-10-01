@@ -1,0 +1,178 @@
+[
+    {
+        "conversations": [
+            {
+                "human": "I'd like to know the price of silver membership.",
+                "assistant": "{\"conversation_stage_id\": 3,\"tool_required\": \"yes\",\"tool_name\": \"PriceInquiry\", \"operation_id\": \"fetchMembershipPrice\", \"tool_headers\": {\"Authorization\": \"sensitive_value\"}, \"tool_parameters\": {}, \"tool_body_parameters\": {\"membership\": \"Silver-Gym-Membership\"}}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "Help me book an appointment.",
+                "assistant": "{\"conversation_stage_id\": 7,\"tool_required\": \"yes\",\"tool_name\": \"OnsiteAppointment\", \"operation_id\": \"bookAppointment\", \"tool_headers\": {\"Authorization\": \"sensitive_value\"}, \"tool_parameters\": {\"url\": \"book-appointment\"}, \"tool_body_parameters\": {\"date\": \"next Monday\", \"time\": \"10:00 AM\"}}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "I'm having some back pain that's why considering the gym.",
+                "assistant": "{\"conversation_stage_id\": 3,\"tool_required\": \"no\"}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "Yes, I'd like to know the yoga classes schedule.",
+                "assistant": "{\"conversation_stage_id\": 2,\"tool_required\": \"yes\",\"tool_name\": \"GetClassSchedule\", \"operation_id\": \"fetchClassSchedule\", \"tool_headers\": {\"Authorization\": \"sensitive_value\"}, \"tool_parameters\": {\"class_name\": \"yoga\"}, \"tool_body_parameters\": {}}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "Help me book a trial session tomorrow.",
+                "assistant": "{\"conversation_stage_id\": 6,\"tool_required\": \"yes\",\"tool_name\": \"ScheduleTrialSession\", \"operation_id\": \"bookTrialSession\", \"tool_headers\": {\"Authorization\": \"sensitive_value\"}, \"tool_parameters\": {\"url\": \"schedule-trial\"}, \"tool_body_parameters\": {\"date\": \"tomorrow\", \"time\": \"10:00 AM\"}}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "I want to lose weight and build muscle.",
+                "assistant": "{\"conversation_stage_id\": 4,\"tool_required\": \"no\"}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "What are the benefits of the Gold membership?",
+                "assistant": "{\"conversation_stage_id\": 2,\"tool_required\": \"no\"}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "Yes, I am available next Monday at 10 AM. Help me book a personal training session.",
+                "assistant": "{\"conversation_stage_id\": 7,\"tool_required\": \"yes\",\"tool_name\": \"PersonalTraining\", \"operation_id\": \"bookTrainerSession\", \"tool_headers\": {\"Authorization\": \"sensitive_value\"}, \"tool_parameters\": {\"trainer_id\": \"johndoe\"}, \"tool_body_parameters\": {\"date\": \"next Monday\", \"time\": \"10:00 AM\"}}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "I am free tomorrow afternoon.",
+                "assistant": "{\"conversation_stage_id\": 6,\"tool_required\": \"yes\",\"tool_name\": \"GymAppointmentAvailability\", \"operation_id\": \"checkAvailability\", \"tool_headers\": {\"Authorization\": \"sensitive_value\"}, \"tool_parameters\": {\"date\": \"tomorrow\", \"time\": \"afternoon\"}, \"tool_body_parameters\": {}}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "Yes, I'd like to join the spin fitness class.",
+                "assistant": "{\"conversation_stage_id\": 4,\"tool_required\": \"yes\",\"tool_name\": \"GetClassSchedule\", \"operation_id\": \"fetchClassSchedule\", \"tool_headers\": {\"Authorization\": \"sensitive_value\"}, \"tool_parameters\": {\"class_name\": \"spin\"}, \"tool_body_parameters\": {}}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "Sure, when do zumba classes start?",
+                "assistant": "{\"conversation_stage_id\": 2,\"tool_required\": \"yes\",\"tool_name\": \"GetClassSchedule\", \"operation_id\": \"fetchClassSchedule\", \"tool_headers\": {\"Authorization\": \"sensitive_value\"}, \"tool_parameters\": {\"class_name\": \"zumba\"}, \"tool_body_parameters\": {}}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "I'd like to know if there are any membership discounts available.",
+                "assistant": "{\"conversation_stage_id\": 3,\"tool_required\": \"yes\",\"tool_name\": \"DiscountInquiry\", \"operation_id\": \"checkDiscount\", \"tool_headers\": {\"Authorization\": \"sensitive_value\"}, \"tool_parameters\": {}, \"tool_body_parameters\": {\"membership_type\": \"any\"}}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "Can you provide information about the swimming pool facilities?",
+                "assistant": "{\"conversation_stage_id\": 2,\"tool_required\": \"no\"}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "Please help me cancel my gym appointment for tomorrow.",
+                "assistant": "{\"conversation_stage_id\": 7,\"tool_required\": \"yes\",\"tool_name\": \"AppointmentCancellation\", \"operation_id\": \"cancelAppointment\", \"tool_headers\": {\"Authorization\": \"sensitive_value\"}, \"tool_parameters\": {\"appointment_id\": \"12345\"}, \"tool_body_parameters\": {}}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "I need to reschedule my personal training session.",
+                "assistant": "{\"conversation_stage_id\": 7,\"tool_required\": \"yes\",\"tool_name\": \"RescheduleTrainingSession\", \"operation_id\": \"rescheduleSession\", \"tool_headers\": {\"Authorization\": \"sensitive_value\"}, \"tool_parameters\": {\"trainer_id\": \"johndoe\"}, \"tool_body_parameters\": {\"new_date\": \"next Tuesday\", \"new_time\": \"11:00 AM\"}}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "Do you have any yoga classes available in the evening?",
+                "assistant": "{\"conversation_stage_id\": 3,\"tool_required\": \"yes\",\"tool_name\": \"ClassScheduleInquiry\", \"operation_id\": \"fetchClassSchedule\", \"tool_headers\": {\"Authorization\": \"sensitive_value\"}, \"tool_parameters\": {\"class_name\": \"yoga\", \"time_of_day\": \"evening\"}, \"tool_body_parameters\": {}}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "I'm interested in the family membership plan. Can you provide more details?",
+                "assistant": "{\"conversation_stage_id\": 2,\"tool_required\": \"no\"}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "I'd like to upgrade my membership from silver to gold.",
+                "assistant": "{\"conversation_stage_id\": 4,\"tool_required\": \"yes\",\"tool_name\": \"MembershipUpgrade\", \"operation_id\": \"upgradeMembership\", \"tool_headers\": {\"Authorization\": \"sensitive_value\"}, \"tool_parameters\": {\"current_membership\": \"silver\", \"new_membership\": \"gold\"}, \"tool_body_parameters\": {}}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "Is there a way to pause my membership while I travel?",
+                "assistant": "{\"conversation_stage_id\": 5,\"tool_required\": \"yes\",\"tool_name\": \"MembershipHold\", \"operation_id\": \"pauseMembership\", \"tool_headers\": {\"Authorization\": \"sensitive_value\"}, \"tool_parameters\": {}, \"tool_body_parameters\": {\"hold_duration\": \"2 months\"}}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "Can you assist me with changing my contact information?",
+                "assistant": "{\"conversation_stage_id\": 5,\"tool_required\": \"yes\",\"tool_name\": \"UpdateContactInfo\", \"operation_id\": \"updateInfo\", \"tool_headers\": {\"Authorization\": \"sensitive_value\"}, \"tool_parameters\": {}, \"tool_body_parameters\": {\"new_phone\": \"1234567890\", \"new_email\": \"user@example.com\"}}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "What are the payment options available for membership renewal?",
+                "assistant": "{\"conversation_stage_id\": 3,\"tool_required\": \"no\"}"
+            }
+        ]
+    },
+    {
+        "conversations": [
+            {
+                "human": "I want to know the personal trainer's availability next week.",
+                "assistant": "{\"conversation_stage_id\": 3,\"tool_required\": \"yes\",\"tool_name\": \"TrainerAvailability\", \"operation_id\": \"checkTrainerAvailability\", \"tool_headers\": {\"Authorization\": \"sensitive_value\"}, \"tool_parameters\": {\"trainer_id\": \"johndoe\", \"date_range\": \"next week\"}, \"tool_body_parameters\": {}}"
+            }
+        ]
+    }
+]
