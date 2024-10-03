@@ -210,3 +210,9 @@ This will start the Gradio interface. Open the provided URL in your web browser.
 - Keep your Python packages updated with `pip install --upgrade -r requirements.txt`
 
 Remember to keep your API keys and tokens secure. Happy fine-tuning!
+
+## Alternative, installation
+
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+pip install triton
+pip install unsloth gradio transformers datasets tqdm

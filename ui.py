@@ -7,23 +7,17 @@ from inference_utils import test_model
 from gguf_utils import convert_to_gguf
 from unsloth import FastLanguageModel
 from unsloth.chat_templates import get_chat_template
+from upload_utils import upload_to_huggingface, upload_gguf_to_huggingface
 
 def create_gradio_interface():
     models = [
         "unsloth/Meta-Llama-3.1-8B-bnb-4bit",
-        "unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit",
-        "unsloth/Meta-Llama-3.1-70B-bnb-4bit",
-        "unsloth/Meta-Llama-3.1-405B-bnb-4bit",
         "unsloth/Mistral-Small-Instruct-2409",
         "unsloth/mistral-7b-instruct-v0.3-bnb-4bit",
         "unsloth/Phi-3.5-mini-instruct",
         "unsloth/Phi-3-medium-4k-instruct",
         "unsloth/gemma-2-9b-bnb-4bit",
         "unsloth/gemma-2-27b-bnb-4bit",
-        "unsloth/Llama-3.2-1B-bnb-4bit",
-        "unsloth/Llama-3.2-1B-Instruct-bnb-4bit",
-        "unsloth/Llama-3.2-3B-bnb-4bit",
-        "unsloth/Llama-3.2-3B-Instruct-bnb-4bit",
         "unsloth/Llama-3.2-3B-Instruct",
     ]
 
@@ -82,6 +76,13 @@ def create_gradio_interface():
             gguf_convert_btn = gr.Button("Convert to GGUF")
             gguf_output = gr.Textbox(label="GGUF Conversion Output")
 
+        with gr.Tab("Upload to Hugging Face"):
+            repo_name = gr.Textbox(label="Hugging Face Repository Name")
+            model_type = gr.Radio(["Fine-tuned Model", "GGUF Converted Model"], label="Model Type to Upload", value="Fine-tuned Model")
+            gguf_file_path = gr.Textbox(label="GGUF File Path (if uploading GGUF model)", visible=False)
+            upload_btn = gr.Button("Upload to Hugging Face")
+            upload_output = gr.Textbox(label="Upload Output")
+
         def load_model_and_tokenizer(model_path, hf_token):
             model_val, tokenizer_val = load_model(model_path, hf_token)
             tokenizer_val = get_chat_template(tokenizer_val, chat_template="llama-3.1")
@@ -93,6 +94,9 @@ def create_gradio_interface():
         def update_dataset_input_visibility(choice):
             return gr.update(visible=(choice == "Hugging Face")), gr.update(visible=(choice == "Local File"))
 
+        def update_gguf_path_visibility(choice):
+            return gr.update(visible=(choice == "GGUF Converted Model"))
+
         load_model_btn.click(
             load_model_and_tokenizer,
             inputs=[model_path, hf_token],
@@ -103,6 +107,12 @@ def create_gradio_interface():
             update_dataset_input_visibility,
             inputs=[dataset_source],
             outputs=[hf_dataset_path, local_dataset_path]
+        )
+
+        model_type.change(
+            update_gguf_path_visibility,
+            inputs=[model_type],
+            outputs=[gguf_file_path]
         )
 
         def prepare_dataset_wrapper(source, hf_path, local_file, hf_token, tokenizer_val):
@@ -193,6 +203,25 @@ def create_gradio_interface():
             convert_to_gguf_wrapper,
             inputs=[model, tokenizer, gguf_output_path, gguf_quant_method],
             outputs=[gguf_output]
+        )
+
+        def upload_to_hf_wrapper(model_val, tokenizer_val, repo_name, hf_token, model_type, gguf_file_path):
+            if model_type == "Fine-tuned Model":
+                if model_val is None or tokenizer_val is None:
+                    return "Error: Model and tokenizer not loaded. Please load the model first."
+                result = upload_to_huggingface(model_val, tokenizer_val, repo_name, hf_token)
+            elif model_type == "GGUF Converted Model":
+                if not gguf_file_path:
+                    return "Error: GGUF file path not provided. Please enter the path to the GGUF file."
+                result = upload_gguf_to_huggingface(gguf_file_path, repo_name, hf_token)
+            else:
+                return "Error: Invalid model type selected."
+            return result
+
+        upload_btn.click(
+            upload_to_hf_wrapper,
+            inputs=[model, tokenizer, repo_name, hf_token, model_type, gguf_file_path],
+            outputs=[upload_output]
         )
 
     return demo
