@@ -12,13 +12,9 @@ from upload_utils import upload_to_huggingface, upload_gguf_to_huggingface
 def create_gradio_interface():
     models = [
         "unsloth/Meta-Llama-3.1-8B-bnb-4bit",
-        "unsloth/Mistral-Small-Instruct-2409",
-        "unsloth/mistral-7b-instruct-v0.3-bnb-4bit",
-        "unsloth/Phi-3.5-mini-instruct",
-        "unsloth/Phi-3-medium-4k-instruct",
-        "unsloth/gemma-2-9b-bnb-4bit",
-        "unsloth/gemma-2-27b-bnb-4bit",
         "unsloth/Llama-3.2-3B-Instruct",
+        "unsloth/Llama-3.1-Nemotron-70B-Instruct-bnb-4bit",
+        "unsloth/Meta-Llama-3.1-8B-Instruct",
     ]
 
     with gr.Blocks() as demo:
