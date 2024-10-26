@@ -179,7 +179,7 @@ def create_gradio_interface():
                 return_tensors="pt"
             ).to("cuda" if torch.cuda.is_available() else "cpu")
             
-            outputs = model_val.generate(input_ids=inputs, max_new_tokens=128, temperature=1.5, min_p=0.1)
+            outputs = model_val.generate(input_ids=inputs, max_new_tokens=64000, temperature=0.5, min_p=0.1)
             return tokenizer_val.batch_decode(outputs)[0]
 
         test_btn.click(
